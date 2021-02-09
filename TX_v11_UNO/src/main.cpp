@@ -1,5 +1,66 @@
-#include <Arduino.h>
 //BS_NODE_9.ino
+
+/*
+ * NRF24L01       Arduino_ Uno    Arduino_Mega    Blue_Pill(stm32f01C)
+ * __________________________________________________________________________
+ * VCC        |   3.3v          | 3.3v          |     3.3v
+ * GND        |   GND           | GND           |     GND
+ * CSN        |   Pin10 SPI/SS  | Pin10 SPI/SS  |     B0 NSS1 (PB0) 3.3v
+ * CE         |   Pin9          | Pin9          |     B1 digital (PB1) 3.3v
+ * SCK        |   Pin13         | Pin52         |     A5 SCK1   (PA5) 3.3v
+ * MOSI       |   Pin11         | Pin51         |     A7 MOSI1  (PA7) 3.3v
+ * MISO       |   Pin12         | Pin50         |     A6 MISO1  (PA6) 3.3v
+ * 
+ * 
+ */
+
+//Pin Configuration
+#ifdef BOARD_UNO
+
+//NRF24L01
+#define CE 9
+#define CSN 10
+
+//QMC I2C and MPU6050
+#define SCL A5
+#define SDA A4
+#define INTERRUPT_PIN 2  // use pin 2 on Arduino Uno & most boards
+
+//general
+
+#define led_pin 6
+#define button_pin 7
+#define modePin 8
+#define BoardLED 13
+#endif
+
+#ifdef BOARD_STM32
+
+//NRF24L01
+#define CE PB1
+#define CSN PB0
+
+//QMC I2C and MPU6050
+#define SCL PB8
+#define SDA PB9
+#define INTERRUPT_PIN 2  // use pin 2 on Arduino Uno & most boards not known for stm32
+
+//general
+#define button_pin PB10
+#define led_pin PB11
+#define BoardLED PC13
+#endif
+
+
+#include <Arduino.h>
+#include <SPI.h>
+#include <nRF24L01.h>
+#include <RF24.h>
+
+
+
+RF24 radio(CE, CSN);
+
 //MPU inlcude
 //+++#include "I2Cdev.h"
 
@@ -14,7 +75,7 @@
 
 MPU6050 mpu;
 #define OUTPUT_READABLE_YAWPITCHROLL
-#define INTERRUPT_PIN 2  // use pin 2 on Arduino Uno & most boards
+
 
 #define dt 1
 #define dp 1
@@ -47,12 +108,12 @@ void dmpDataReady() {
 //+++
 
 
-int modePin=8;
+
 
 
 
 //SCL->A5
-//SCA->A4
+//SDA->A4
 
 #include <SPI.h>
 #include "Wire.h"
@@ -73,15 +134,19 @@ int details = 5;
 
 ////MPU6050 mpu (Wire);
 //SCL->A5
-//SCA->A4
+//SDA->A4
+
+
 
 int FLAG =0;
 struct QMC5883L_CONFIG
 {
   int SCL;//A5
-  int SCA;//A4
+  int SDA;//A4
 };
-QMC5883L_CONFIG QMC5883L_PIN = {A4, A5};
+
+
+QMC5883L_CONFIG QMC5883L_PIN = {SCL, SDA};
 #include <QMC5883LCompass.h>
 QMC5883LCompass compass;
 int16_t QMC[4];
@@ -179,7 +244,6 @@ RF24 radio(NFR24L01_PIN.CE, NFR24L01_PIN.CSN); // CE, CSN
 const int DestinationADDRESS = {NFR24L01_PIN.DestinationADDRESS}; //Byte of array representing the address. This is the address where we will send the data. This should be same on the receiving side.
 const int ListeningADDRESS = {NFR24L01_PIN.ListeningADDRESS};
 
-int button_pin = 7;
 int CODE = NFR24L01_PIN.CODE;
 boolean button_state = 0;
 
