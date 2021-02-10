@@ -42,8 +42,33 @@
 
 RF24 radio(CE, CSN);
 //const byte address[6] = "00001";     //Byte of array representing the address. This is the address where we will send the data. This should be same on the receiving side.
-uint16_t address = 0x99;
-uint16_t CODE = 0xF0F0;
+int address = 0x99;
+int ListeningADDRESS = 0x99;//Rx
+int DestinationADDRESS = 0xFF;//Tx or BS
+const int CODE = 0x7F0F;
+int B[10] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'};
+/*
+ //BEACON ENCODING
+  B[0] = 0x70FF;
+  B[3] = DestinationADDRESS;
+  B[4] = CODE;
+  B[5] = THETA;
+  B[6] = PHI;
+  B[9] = FLAG;
+  //TRANSMIT BEACON B
+  radio.write(&B, sizeof(B));
+*/
+
+  //B[4] = CODE;
+
+/* in new code
+const int DestinationADDRESS = 0x99;
+const int ListeningADDRESS = 0xFF;
+int CODE = 0x7F0F;
+*/
+
+
+
 bool button_state = 0;
 void setup()
 {
@@ -58,30 +83,36 @@ void setup()
 }
 void loop()
 {
-  radio.write(&CODE, sizeof(CODE));
+  B[4] = CODE;
+  radio.write(&B, sizeof(B));//Transmit Beacon
+  Serial.print("\n Transmit Blank Beacon");
+  Serial.print("\nMathing CODE=");
+  Serial.print(CODE);
+  Serial.print("\n");
   digitalWrite(BoardLED, LOW);
   delay(5);
   digitalWrite(BoardLED, HIGH);
   delay(45);
-
+/*
   button_state = digitalRead(button_pin);
   Serial.print(button_state);
   if (button_state == HIGH)
   {
     Serial.println(" HIGH");
     //const char text[] = "Your Button State is HIGH";
-    const char text[] = "11001100";
+   // const char text[] = "11001100";
 
-    radio.write(&text, sizeof(text)); //Sending the message to receiver
+   // radio.write(&text, sizeof(text)); //Sending the message to receiver
   }
   else
   {
 
-    Serial.println(" LOW");
+    Serial.println("LOW");
     //const char text[] = "Your Button State is LOW";
     //const char text[] = "11001100";
     //radio.write(&text, sizeof(text)); //Sending the message to receiver
   }
   //radio.write(&button_state, sizeof(button_state)); //Sending the message to receiver
-  delay(100);
+  */
+  delay(50);
 }

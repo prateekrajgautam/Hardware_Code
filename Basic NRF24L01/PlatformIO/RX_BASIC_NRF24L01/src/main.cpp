@@ -41,13 +41,30 @@
 
 
 RF24 radio(CE, CSN);
-
+int ListeningADDRESS = 0x99;//Rx
+int DestinationADDRESS = 0xFF;//Tx or BS
+//int CODE = 0x7F0F;
 
 //const byte address[6] = "00001";
-const uint16_t address = 0x99;
+const int address = 0x99;
 
 //int CODE_KEY=11001100;
-const uint16_t CODE_KEY = 0xF0F0;
+const int CODE_KEY = 0x7F0F;
+//int B[10] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'};//Beacon
+int B[10];
+/*
+ //BEACON ENCODING
+  B[0] = 0x70FF;
+  B[3] = DestinationADDRESS;
+  B[4] = CODE;
+  B[5] = THETA;
+  B[6] = PHI;
+  B[9] = FLAG;
+  //TRANSMIT BEACON B
+  radio.write(&B, sizeof(B));
+*/
+
+
 //bool button_state = 0;
 bool button_state = 0;
 //int led_pin = 6;//UNO
@@ -64,7 +81,8 @@ void setup()
 }
 void loop()
 {
-  digitalWrite(BoardLED, HIGH);
+  B[4] = '\0';
+  int CODE = 0x00;
   if (radio.available()) //Looking for the data.
   {
     digitalWrite(BoardLED, LOW);
@@ -72,26 +90,32 @@ void loop()
     digitalWrite(BoardLED, HIGH);
     delay(45);
     //char text[32] = "00000000"; //Saving the incoming data
-    uint16_t CODE = 0x0000;
-    radio.read(&CODE, sizeof(CODE));
+    
+    //radio.read(&CODE, sizeof(CODE));
+    radio.read(&B, sizeof(B));
+    CODE = B[4];
     //radio.read(&text, sizeof(text)); //Reading the data
     //Serial.print(text);
     //radio.read(&button_state, sizeof(button_state)); //Reading the data
 
-    Serial.print("Beacon Received");
+    Serial.print("Beacon Received\n");
     if (CODE == CODE_KEY)
     {
       digitalWrite(led_pin, HIGH);
       delay(10);
       digitalWrite(led_pin, LOW);
       delay(40);
+      Serial.print(" CODE Received: ");
+      Serial.print(CODE);
+      Serial.print("        CODE KEY: ");
+      Serial.println(CODE_KEY);
     }
     else
     {
       Serial.println(" CODE missMatch");
       Serial.print(" CODE Received: ");
       Serial.print(CODE);
-      Serial.print(" CODE KEY: ");
+      Serial.print("        CODE KEY: ");
       Serial.println(CODE_KEY);
     }
   }
@@ -99,5 +123,16 @@ void loop()
   {
     Serial.println("No Signal");
   }
-  delay(100);
+  delay(50);
+
+  Serial.println("\nBeacon Recieived\n");
+  Serial.println(B[0]);
+  Serial.println(B[2]);
+  Serial.println(B[3]);
+  Serial.println(B[4]);
+  Serial.println(B[5]);
+  Serial.println(B[6]);
+  Serial.println(B[7]);
+  Serial.println(B[8]);
+  Serial.println(B[9]);
 }
