@@ -49,9 +49,9 @@ int DestinationADDRESS = 0xFF;//Tx or BS
 const int address = 0x99;
 
 //int CODE_KEY=11001100;
-const int CODE_KEY = 0x7F0F;
+const uint16_t CODE_KEY = 0x7F0F;
 //int B[10] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'};//Beacon
-int B[10];
+uint16_t  B[10];
 /*
  //BEACON ENCODING
   B[0] = 0x70FF;
@@ -82,7 +82,7 @@ void setup()
 void loop()
 {
   B[4] = '\0';
-  int CODE = 0x00;
+  uint16_t CODE = 0x00;
   if (radio.available()) //Looking for the data.
   {
     digitalWrite(BoardLED, LOW);

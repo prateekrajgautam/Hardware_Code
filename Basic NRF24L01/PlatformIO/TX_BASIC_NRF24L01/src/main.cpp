@@ -45,8 +45,8 @@ RF24 radio(CE, CSN);
 int address = 0x99;
 int ListeningADDRESS = 0x99;//Rx
 int DestinationADDRESS = 0xFF;//Tx or BS
-const int CODE = 0x7F0F;
-int B[10] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'};
+const uint16_t CODE = 0x7F0F;
+uint16_t B[10] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'};
 /*
  //BEACON ENCODING
   B[0] = 0x70FF;
