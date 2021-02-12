@@ -118,8 +118,7 @@ int DestinationADDRESS = 0x99; //Rx
 int ListeningADDRESS = 0xFF;   //Tx or BS
 const uint16_t CODE = 0x7F0F;
 uint16_t B[10] = {'\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0', '\0'};
-uint16_t(*ptrB) = B;
-int sizeOfB = sizeof(B);
+uint16_t *ptrB = B;
 uint16_t C[10];
 /*
  //BEACON ENCODING
@@ -163,8 +162,6 @@ bool button_state = 0;
 int printDetails;
 void setup()
 {
-
-  Serial.begin(9600);
   pinMode(BoardLED, OUTPUT);
   pinMode(button_pin, INPUT_PULLUP);
   pinMode(details, INPUT_PULLUP);
@@ -187,6 +184,7 @@ void setup()
   Serial.println(check);
   delay(100);
 
+  Serial.begin(9600);
   //const char text[] = "11001100";
 
   servoPhi.attach(servoPhiPin);
@@ -197,37 +195,23 @@ void setup()
   compass.init();
 }
 
-void transmitBeacon(int printDetails, uint16_t *B)
+void transmitBeacon(int printDetails, uint16_t * B)
 {
-
   if (printDetails == LOW)
   {
     Serial.print("\nTransmitting Beacon :");
-    for (int i = 0; i < 10; i++)
+    for (int i=0; i < 10; i++)
     {
       Serial.print(B[i]);
       Serial.print(" ");
     }
-    //Serial.print("\n size of beacon : ");
-    //Serial.println(sizeOfB);
+    Serial.print("\nSize of beacon: ");
+    int sizeofB = sizeof(B);
+    Serial.print(sizeofB);
+    Serial.print("\n ");
   }
-  radio.stopListening();      //this is not working here in function
-  radio.write(&B, sizeof(B)); //this is not working here in function
-}
-
-void printBeacon(uint16_t *B)
-{
-
-  Serial.print("\nTransmitting Beacon :");
-  for (int i = 0; i < 10; i++)
-  {
-    Serial.print(B[i]);
-    Serial.print(" ");
-  }
-  Serial.print("\n size of beacon : ");
-  Serial.println(sizeOfB);
-  //radio.stopListening();
-  //radio.write(&B, sizeOfB);
+  radio.stopListening();
+  radio.write(&B, sizeof(B));
 }
 
 void loop()
@@ -252,15 +236,17 @@ void loop()
 
   //BEACON TRANSMISSION
   B[4] = CODE;
-  /*
-  //radio.write(&B, sizeof(B)); //Transmit Beacon
-  Serial.print("\n Transmit Blank Beacon");
-  Serial.print("\nMathing CODE=");
-  Serial.print(CODE);
-  Serial.print("\n");
 
-*/
+  transmitBeacon(printDetails, ptrB);
 
+  if (false)
+  {
+    radio.write(&B, sizeof(B)); //Transmit Beacon
+    Serial.print("\n Transmit Blank Beacon");
+    Serial.print("\nMathing CODE=");
+    Serial.print(CODE);
+    Serial.print("\n");
+  }
   digitalWrite(BoardLED, LOW);
   delay(5);
   digitalWrite(BoardLED, HIGH);
@@ -291,7 +277,6 @@ void loop()
   //SERVO CONTROL
   if (true)
   {
-    //Serial.print("\n Controling Servo \n");
     bool mode = digitalRead(modePin);
     Serial.print("\n MODE \t");
     Serial.print(mode);
@@ -306,7 +291,6 @@ void loop()
         //PHI = readQMC(0, p2);
         //PHI = mod((PHI + 360 - 90.0), 360.0); //90* shift, Y points to DA
         servoPhi.write(180); //move 45in 50ms
-        servoTheta.write(180); //move 45in 50ms
         delay(100);
         //servoPhi.write(90);
 
@@ -314,12 +298,11 @@ void loop()
         //delay(50);
         //B[6] = PHI; //update beacon and retransmit
         //TRANSMIT BEACON B
-        radio.stopListening();
-        radio.write(&B, sizeof(B));
-        printBeacon(ptrB);
+        //radio.stopListening();
+        //radio.write(&B, sizeof(B));
+        transmitBeacon(printDetails, ptrB);
       }
       servoPhi.write(90); //stop
-      servoTheta.write(90);
     }
   }
 
@@ -347,7 +330,6 @@ void loop()
   //RECEIVER MODE
   if (true)
   {
-    // Serial.print("Listening to Node\n");
     radio.startListening();
 
     //====
@@ -390,9 +372,10 @@ void loop()
   }
 
   //TRANSMIT BEACON B each iteration
-  radio.stopListening();
-  radio.write(&B, sizeof(B));
-  printBeacon(ptrB);
+  //radio.stopListening();
+  //radio.write(&B, sizeof(B));
+  //transmitBeacon(printDetails, ptrB);
+
+  transmitBeacon(0, ptrB);
   delay(50);
-  //Serial.print("\nLoop End\n");
 }

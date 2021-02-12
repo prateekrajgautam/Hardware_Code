@@ -1,4 +1,4 @@
-update=Thu Feb 11 14:51:36 2021
+update=Thu Feb 11 15:26:59 2021
 version=1
 last_client=kicad
 [general]
@@ -20,12 +20,12 @@ SubpartIdSeparator=0
 SubpartFirstId=65
 NetFmtName=Pcbnew
 SpiceAjustPassiveValues=0
-LabSize=50
+LabSize=118
 ERC_TestSimilarLabels=1
 [pcbnew]
 version=1
 PageLayoutDescrFile=
-LastNetListRead=stm32_nrf24l01_mpu6050_qmc5883l_LCD.net
+LastNetListRead=Design your own Circuit Boards using Kicad Part 1 (FREE software).net
 CopperLayerCount=2
 BoardThickness=1.6
 AllowMicroVias=0

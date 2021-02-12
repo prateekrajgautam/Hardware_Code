@@ -1,0 +1,67 @@
+#include <Arduino.h>
+#include <QMC5883LCompass.h>
+
+
+#define details 5
+
+
+QMC5883LCompass compass;
+
+
+
+
+int16_t PHI = 1000;
+int16_t QMC[4];
+int16_t *p2 = QMC;
+
+int16_t readQMC(const int printStatus, int16_t *QMC)
+{
+  compass.read();
+  QMC[0] = compass.getX();
+  QMC[1] = compass.getY();
+  QMC[2] = compass.getZ();
+  QMC[3] = compass.getAzimuth();
+  if (printStatus == 1)
+  {
+    Serial.println("QMC5883L");
+    Serial.print("X: ");
+    Serial.print(QMC[0]);
+    Serial.print(" Y: ");
+    Serial.print(QMC[1]);
+    Serial.print(" Z: ");
+    Serial.print(QMC[2]);
+    Serial.print(" A: ");
+    Serial.print(QMC[3]);
+    Serial.println();
+  }
+  return QMC[3];
+}
+
+
+
+
+void setup() {
+  Serial.begin(9600);
+  compass.init();
+  pinMode(details,INPUT_PULLUP);
+}
+
+void loop() {
+int printDetails = digitalRead(details);
+  PHI=readQMC(printDetails,p2);
+  Serial.print("\nPHI: ");
+  Serial.print(QMC[3]);
+  /*
+  // Read compass values
+  compass.read();
+
+  // Return Azimuth reading
+  int a;
+  a = compass.getAzimuth();
+  
+  Serial.print("A: ");
+  Serial.print(a);
+  Serial.println();
+  */
+  delay(250);
+}
