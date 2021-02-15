@@ -4,8 +4,8 @@
 
 //SSID of your network
 
-const char *ssid = "ESP8266_BaseStation";
-const char *password = "connectPass";
+const char *ssid = "ESP-01_BS";
+const char *password = "password";
 
 void setup()
 {
