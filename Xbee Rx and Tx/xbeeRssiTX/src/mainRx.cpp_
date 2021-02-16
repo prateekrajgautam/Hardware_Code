@@ -1,0 +1,32 @@
+#include <Arduino.h>
+#include <XBee.h>
+//#include <SoftwareSerial.h>
+
+XBee xbee = XBee();
+
+Rx16Response rx16 = Rx16Response();
+
+void setup()
+{
+    Serial.begin(9600);
+    //xbee.begin(9600);
+    xbee.begin(Serial);
+    Serial.print("Init XBee");
+}
+
+void loop()
+{
+    Serial.print("\nLoop");
+    xbee.readPacket(5);
+    if (xbee.getResponse().isAvailable())
+    {
+    Serial.print(" Getting response");
+        if (xbee.getResponse().getApiId() == RX_16_RESPONSE)
+        {
+            xbee.getResponse().getRx16Response(rx16);
+
+            Serial.print("\nRSSI");
+            Serial.print(rx16.getRssi());
+        }
+    }
+}
