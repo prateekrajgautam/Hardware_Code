@@ -31,4 +31,31 @@
 
 3. and TX (arduino)  pin to TX(external board)
 
-   
+
+# Uploading code to ESPWROOM32 ESP8266
+
+
+
+1. press **EN** to reset,
+2. compile and upload and when show `connecting .................`
+3. press **Boot** and release.
+
+
+
+
+
+platformio config for esp32-wroom-32 is
+
+```ini
+[env:esp_wroom_02]
+platform = espressif32
+board = nodemcu-32s
+framework = arduino
+monitor_speed = 115200
+lib_deps = yoursunny/WifiEspNow@^0.0.20201226
+```
+
+
+
+
+

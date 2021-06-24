@@ -5,6 +5,12 @@
 //#include <SPI.h>
 //#include <WiFi.h>
 
+
+//LED pin
+
+#define LED 2 
+float max_rssi = -1000;
+float min_rssi = -0;
 //SSID of your network
 
 const char *ssid = "ESP-01_BS";
@@ -17,6 +23,7 @@ ESP8266WiFiMulti wifiMulti; // Create an instance of the ESP8266WiFiMulti class,
 
 void setup()
 {
+  pinMode(LED, OUTPUT);
   Serial.begin(115200); // Start the Serial communication to send messages to the computer
   delay(10);
   Serial.println('\n');
@@ -39,6 +46,7 @@ void setup()
   Serial.println(WiFi.SSID()); // Tell us what network we're connected to
   Serial.print("IP address:\t");
   Serial.println(WiFi.localIP()); // Send the IP address of the ESP8266 to the computer
+  
 }
 
 void loop()
@@ -57,5 +65,23 @@ void loop()
   Serial.print("\n");
   Serial.print(WiFi.SSID());
   Serial.print(" @ RSSI: ");
-  Serial.println(WiFi.RSSI());
+  float rssi = WiFi.RSSI();
+  Serial.print(rssi);
+  if(rssi>max_rssi){
+    max_rssi=rssi;
+  }
+  if(rssi<min_rssi){
+    min_rssi=rssi;
+  }
+  Serial.print("  Max: ");
+  Serial.print(max_rssi);
+  Serial.print("  min: ");
+  Serial.println(min_rssi);
+  if(max_rssi-rssi<=10 ){
+    digitalWrite(LED, LOW); // Turn the LED on (Note that LOW is the voltage level)
+    delay(50); // Wait for a second
+    digitalWrite(LED, HIGH); // Turn the LED off by making the voltage HIGH
+    //delay(500); // Wait for two seconds
+  }
+  digitalWrite(LED, HIGH);
 }
